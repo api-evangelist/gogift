@@ -1,6 +1,8 @@
 aid: gogift
 name: GoGift
-description: "Do you need a technology solution to easily order and send digital gift cards? GoGift has a gift card API for that.\xA0Instantly send gift cards with a simple API integration! "
+description: >-
+  Do you need a technology solution to easily order and send digital gift cards? GoGift
+  has a gift card API for that. Instantly send gift cards with a simple API integration!
 type: Index
 position: Consumer
 access: 3rd-Party
@@ -16,7 +18,10 @@ specificationVersion: '0.19'
 apis:
   - aid: gogift:gogift
     name: GoGift
-    description: "Do you need a technology solution to easily order and send digital gift cards? GoGift has a gift card API for that.\xA0Instantly send gift cards with a simple API integration! "
+    description: >-
+      Do you need a technology solution to easily order and send digital gift cards?
+      GoGift has a gift card API for that. Instantly send gift cards with a simple
+      API integration!
     humanURL: https://www.global.gogift.com/gift-card-api
     tags:
       - API
