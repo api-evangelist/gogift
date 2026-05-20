@@ -28,6 +28,10 @@ apis:
       - type: Documentation
         url: https://www.global.gogift.com/gift-card-api
 common:
+  - type: GitHubOrganization
+    url: https://github.com/GoGift
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/gogift
   - type: Website
     url: https://www.global.gogift.com/
   - type: Documentation
