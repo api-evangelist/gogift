@@ -4,6 +4,17 @@ description: >-
   Do you need a technology solution to easily order and send digital gift cards? GoGift
   has a gift card API for that. Instantly send gift cards with a simple API integration!
 type: Index
+deliveryModel:
+  model: unknown
+  open_source: false
+  commercial: false
+  callable_host: false
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - none
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: unknown
