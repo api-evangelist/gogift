@@ -1,0 +1,222 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/#common-requestresponse-types
+sources:
+  - https://docs.gogift.io/#common-requestresponse-types
+  - https://docs.gogift.io/#basket
+  - https://docs.gogift.io/#delivery
+  - https://docs.gogift.io/#productline
+  - https://docs.gogift.io/#product
+  - https://docs.gogift.io/#inventory
+  - https://docs.gogift.io/#webhookcontent
+provider: GoGift
+providerId: gogift
+description: >-
+  Entity graph for the GoGift commerce API, read from the object reference tables the provider
+  publishes at docs.gogift.io. GoGift ships no OpenAPI, so this graph was read from the
+  published parameter tables rather than derived from `$ref` links in a machine-readable
+  contract; every entity, field and enum below appears verbatim in the provider's reference.
+model_style: nested-aggregate
+model_note: >-
+  The Basket is the aggregate root. Everything about a purchase hangs off it: a basket owns
+  deliveries, a delivery owns product lines and fees, and a product line points at a Product
+  and a specific SKU from that product's Inventory. There is no flat top-level Order resource
+  in the public reference — an order comes into existence as a side effect of finalising a
+  basket, identified only by `orderId` / `publicOrderId`.
+id_style:
+  type: opaque string
+  prefixes_published: false
+  note: >-
+    Identifiers are opaque strings with no documented prefix scheme. Two identifiers in the
+    webhook payload (`orderId`, `deliveryId`) are integers, unlike the string ids used
+    everywhere in the REST reference.
+entities:
+  - name: Basket
+    role: aggregate root
+    lifecycle_field: purchasePhase
+    lifecycle_states:
+      - Shopping
+      - Paying
+      - PaymentAuthorized
+      - Completed
+    fields:
+      - {name: id, type: string, description: The unique identifier of the basket}
+      - {name: publicOrderId, type: string, description: Public ID of the order that will be created if the purchase completes; used when contacting customer service}
+      - {name: salesChannelId, type: string, description: The sales channel this basket belongs to}
+      - {name: userIdMakingTheBasket, type: string}
+      - {name: reference, type: string, description: The department reference string}
+      - {name: paymentCurrency, type: string, description: ISO 4217 code of the payment currency}
+      - {name: totalTaxAmount, type: decimal}
+      - {name: totalPurchaseAmountWithTax, type: decimal}
+      - {name: totalPaymentAmountWithTax, type: decimal}
+      - {name: totalPaymentAmountWithDiscountNoTax, type: decimal}
+      - {name: createdAt, type: DateTime}
+      - {name: lastUpdatedAt, type: DateTime}
+      - {name: purchasePhase, type: string}
+      - {name: responseStatus, type: ResponseStatus, description: Error envelope; see errors/gogift-problem-types.yml}
+  - name: Delivery
+    role: child of Basket — one shipment/send to one recipient by one method
+    fields:
+      - {name: id, type: string}
+      - {name: deliveryDate, type: DateTime}
+      - {name: deliveryMethod, type: string, enum: [Physical, Email, CsvByEmail, Sms, Webhook]}
+      - {name: recipientName, type: string}
+      - {name: recipientAddress, type: Address, used_when: deliveryMethod = Physical}
+      - {name: recipientEmail, type: string, used_when: deliveryMethod = Email or CsvByEmail}
+      - {name: recipientPhone, type: string, used_when: deliveryMethod = Sms}
+      - {name: recipientWebhookUrl, type: string, used_when: deliveryMethod = Webhook}
+      - {name: deliveryReference, type: string}
+  - name: ProductLine
+    role: one purchased product at one SKU and quantity within a Delivery
+    fields:
+      - {name: lineId, type: string}
+      - {name: productId, type: string, references: Product.id}
+      - {name: stockKeepingUnit, type: string, references: InventoryEntry.sku}
+      - {name: quantity, type: integer}
+      - {name: giftcardValue, type: decimal, description: The value actually available on the gift card}
+      - {name: valueCurrency, type: string, description: ISO 4217 currency of the product's spendable value}
+      - {name: exchangeRate, type: decimal, description: Rate used to convert value currency to payment currency}
+      - {name: priceWithDiscountNoTax, type: decimal}
+      - {name: priceDiscountAmount, type: decimal}
+      - {name: priceTaxAmount, type: decimal}
+      - {name: paymentAmountWithDiscountNoTax, type: decimal}
+      - {name: paymentDiscountAmount, type: decimal}
+      - {name: paymentTaxAmount, type: decimal}
+      - {name: totalPriceWithDiscountNoTax, type: decimal}
+      - {name: totalPriceDiscountAmount, type: decimal}
+      - {name: totalPriceTaxAmount, type: decimal}
+      - {name: totalPaymentAmountWithDiscountNoTax, type: decimal}
+      - {name: totalPaymentDiscountAmount, type: decimal}
+      - {name: totalPaymentTaxAmount, type: decimal}
+      - {name: discountPercentage, type: decimal, note: Value is in hundredths — 512 means 5.12%}
+      - {name: discountTitles, type: LocalizedString}
+      - {name: taxType, type: string}
+      - {name: taxRateMultiplier, type: decimal}
+      - {name: reference, type: string}
+  - name: Fee
+    role: charge applied to a Delivery or to a product inside it
+    fields:
+      - {name: lineId, type: string}
+      - {name: relatedToProductLine, type: string, references: ProductLine.lineId}
+      - {name: targetId, type: string}
+      - {name: targetType, type: string, enum: [Product, DeliveryMethod, B2BDepartment]}
+      - {name: quantity, type: integer}
+      - {name: labels, type: LocalizedString}
+      - {name: discountPercentage, type: decimal}
+      - {name: discountTitles, type: LocalizedString}
+      - {name: paymentAmountWithDiscountNoTax, type: decimal}
+      - {name: paymentDiscountAmount, type: decimal}
+      - {name: paymentTaxAmount, type: decimal}
+      - {name: totalPaymentAmountWithDiscountNoTax, type: decimal}
+      - {name: totalPaymentDiscountAmount, type: decimal}
+      - {name: totalPaymentTaxAmount, type: decimal}
+      - {name: taxType, type: string}
+      - {name: taxRateMultiplier, type: decimal}
+  - name: Payment
+    role: a payment applied to a Basket
+    fields:
+      - {name: id, type: string}
+      - {name: paymentMethod, type: string, enum: [InvoiceByFinance, ExternalPsp, Trustly]}
+      - {name: voucherId, type: string, description: The voucher being redeemed, if applicable}
+  - name: Buyer
+    role: who is making the purchase
+    fields:
+      - {name: accountId, type: string}
+      - {name: accountType, type: string}
+      - {name: name, type: string}
+      - {name: email, type: string}
+      - {name: phone, type: string}
+      - {name: address, type: Address}
+  - name: Address
+    role: value object
+    fields:
+      - {name: countryCode, type: string, standard: ISO 3166 Alpha-2}
+      - {name: city, type: string}
+      - {name: postCode, type: string}
+      - {name: line1, type: string}
+      - {name: line2, type: string}
+      - {name: attention, type: string}
+  - name: Product
+    role: catalogue item
+    fields:
+      - {name: id, type: string}
+      - {name: title, type: LocalizedString}
+      - {name: shortDescription, type: LocalizedString}
+      - {name: availableDeliveryMethods, type: 'string[]', enum: [Email, Sms, CsvByEmail, Webhook, Physical]}
+      - {name: redeemableInCountries, type: 'string[]', standard: ISO 3166 Alpha-2}
+  - name: DeliveryMethod
+    role: per-product pairing of a delivery channel with its purchasable inventory
+    fields:
+      - {name: deliveryMethod, type: string, enum: [Email, Sms, CsvByEmail, Webhook, Physical]}
+      - {name: inventory, type: Inventory}
+  - name: Inventory
+    role: the set of purchasable SKUs for a product/delivery-method pairing
+    fields:
+      - {name: id, type: string}
+      - {name: inventoryEntries, type: 'InventoryEntry[]'}
+  - name: InventoryEntry
+    role: one purchasable SKU, fixed-price or ranged-price
+    pricing_modes:
+      - fixed-price — salesPriceNoTax set, range fields null
+      - ranged-price — salesPriceMinNoTax / salesPriceMaxNoTax / salesPriceStepNoTax set, salesPriceNoTax null
+    fields:
+      - {name: sku, type: string}
+      - {name: priceCurrency, type: string}
+      - {name: salesPriceNoTax, type: Currency}
+      - {name: salesPriceMinNoTax, type: Currency}
+      - {name: salesPriceMaxNoTax, type: Currency}
+      - {name: salesPriceStepNoTax, type: Currency}
+  - name: RedirectConfig
+    role: hosted payment window return URLs
+    fields:
+      - {name: okUrl, type: string, required: true}
+      - {name: failUrl, type: string, required: true}
+      - {name: cancelUrl, type: string, required: true}
+  - name: WebhookContent
+    role: one fulfilled gift card, delivered on the outbound webhook
+    sensitive: true
+    fields:
+      - {name: productId, type: string, references: Product.id}
+      - {name: orderId, type: integer}
+      - {name: deliveryId, type: integer, references: Delivery.id}
+      - {name: amountInDecimal, type: number}
+      - {name: currencyCode, type: string, standard: ISO 4217}
+      - {name: createdAt, type: DateTime}
+      - {name: expiresAt, type: DateTime}
+      - {name: giftcardUri, type: string, sensitive: true}
+      - {name: pin, type: string, sensitive: true}
+  - name: LocalizedString
+    role: value object — a map of ISO 639 language code to translated string, null where untranslated
+  - name: PagingInfo
+    role: value object — totalItems, totalPages, perPage, page
+  - name: ResponseStatus
+    role: value object — errorCode, message, stackTrace, errors[], meta
+input_types:
+  - name: BuyerInput
+    maps_to: Buyer
+    required: [name, address, email, phone]
+    optional: [accountId, accountType]
+  - name: ProductInput
+    maps_to: ProductLine
+    required: [deliveryMethod, recipientName, stockKeepingUnit, productId, quantity, valueCurrency, giftcardValue]
+    optional: [deliveryDate, productReference, recipientAddress, recipientEmail, recipientPhone, recipientWebhookUrl]
+relationships:
+  - {from: Basket, to: Delivery, type: has_many, via: deliveries}
+  - {from: Basket, to: Payment, type: has_many, via: payments}
+  - {from: Basket, to: Buyer, type: has_one, via: buyer}
+  - {from: Delivery, to: ProductLine, type: has_many, via: productLines}
+  - {from: Delivery, to: Fee, type: has_many, via: fees}
+  - {from: Delivery, to: Address, type: has_one, via: recipientAddress}
+  - {from: Buyer, to: Address, type: has_one, via: address}
+  - {from: ProductLine, to: Product, type: belongs_to, via: productId}
+  - {from: ProductLine, to: InventoryEntry, type: belongs_to, via: stockKeepingUnit}
+  - {from: Fee, to: ProductLine, type: belongs_to, via: relatedToProductLine}
+  - {from: Product, to: DeliveryMethod, type: has_many, via: deliveryMethods}
+  - {from: DeliveryMethod, to: Inventory, type: has_one, via: inventory}
+  - {from: Inventory, to: InventoryEntry, type: has_many, via: inventoryEntries}
+  - {from: WebhookContent, to: Product, type: belongs_to, via: productId}
+  - {from: WebhookContent, to: Delivery, type: belongs_to, via: deliveryId}
+entity_count: 16
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

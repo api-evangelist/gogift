@@ -1,0 +1,107 @@
+generated: '2026-09-12'
+method: probed
+source: https://auth.gogift.io/.well-known/openid-configuration
+sources:
+  - https://auth.gogift.io/.well-known/openid-configuration
+  - https://auth-pre.gogift.io/.well-known/openid-configuration
+  - well-known/gogift-openid-configuration.json
+provider: GoGift
+providerId: gogift
+description: >-
+  OAuth 2.0 / OpenID Connect scopes advertised by the GoGift authorization server. These were
+  read from the live `scopes_supported` array in the provider's own OpenID Connect discovery
+  document on both the production (auth.gogift.io) and sandbox (auth-pre.gogift.io) issuers —
+  the two arrays are identical. GoGift publishes no scope-reference page in its API docs, so
+  the descriptions below are the standard OIDC meanings where the scope is a standard one and
+  are marked `undocumented` where GoGift defines the scope itself.
+note: >-
+  The API reference at docs.gogift.io never names a scope. Which of AuthApi / finance_api /
+  retail_api a given client is granted is decided by GoGift when it provisions the client id
+  and secret. Treat the non-standard scopes below as observed-from-discovery, not as a
+  provider-published permissions reference.
+docs: null
+docs_note: No scopes/permissions reference page is published by GoGift.
+scope_count: 11
+scopes:
+  - name: openid
+    standard: true
+    spec: OpenID Connect Core 1.0
+    description: Requests an ID token; required for any OpenID Connect authentication request.
+  - name: profile
+    standard: true
+    spec: OpenID Connect Core 1.0
+    description: Basic profile claims (name, family_name, given_name, preferred_username, locale, updated_at, picture, website, gender, birthdate, zoneinfo).
+  - name: email
+    standard: true
+    spec: OpenID Connect Core 1.0
+    description: The email and email_verified claims.
+  - name: address
+    standard: true
+    spec: OpenID Connect Core 1.0
+    description: The address claim.
+  - name: offline_access
+    standard: true
+    spec: OpenID Connect Core 1.0
+    description: Issues a refresh token so the client can renew the access token without re-authenticating.
+  - name: Permissions
+    standard: false
+    description: GoGift-defined scope releasing the `Permissions` claim, which carries the caller's platform permission set.
+    documented: false
+  - name: PhoneNumber
+    standard: false
+    description: GoGift-defined scope releasing the `PhoneNumber` claim.
+    documented: false
+  - name: Country
+    standard: false
+    description: GoGift-defined scope releasing the `Country` claim, used for locale/currency resolution.
+    documented: false
+  - name: AuthApi
+    standard: false
+    description: >-
+      Access to the GoGift authorization server's own administrative API surface
+      (auth.gogift.io/api/user, /api/group, /api/permission, /api/client, /api/apiresource and
+      the other endpoints advertised as *_endpoint in the discovery document).
+    documented: false
+  - name: retail_api
+    standard: false
+    description: >-
+      Access to the retail/commerce surface on api.gogift.io — the product catalogue, basket
+      and order endpoints (POST|GET /products/filter, GET /products/{id}, POST /baskets,
+      PUT /baskets, POST /baskets/finalize).
+    documented: false
+    inferred: true
+    inference_basis: scope name matched against the documented endpoint families; GoGift does not state the mapping.
+  - name: finance_api
+    standard: false
+    description: >-
+      Access to the finance surface, consistent with the `InvoiceByFinance` payment method the
+      basket finalisation endpoint accepts.
+    documented: false
+    inferred: true
+    inference_basis: scope name matched against the documented `InvoiceByFinance` payment method; GoGift does not state the mapping.
+claims_supported:
+  - sub
+  - name
+  - family_name
+  - given_name
+  - middle_name
+  - nickname
+  - zoneinfo
+  - locale
+  - updated_at
+  - birthdate
+  - gender
+  - preferred_username
+  - profile
+  - picture
+  - website
+  - email
+  - email_verified
+  - Permissions
+  - PhoneNumber
+  - Country
+  - address
+  - openid
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

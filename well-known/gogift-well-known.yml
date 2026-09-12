@@ -1,0 +1,244 @@
+generated: '2026-09-12'
+method: probed
+source: live HTTPS probes of every GoGift host named in apis.yml, the docs (docs.gogift.io)
+  and the OpenID Connect discovery documents served by auth.gogift.io / auth-pre.gogift.io
+provider: GoGift
+providerId: gogift
+description: >-
+  Well-known discovery probe across every GoGift host. Two real documents were found: the
+  OpenID Connect discovery document on the production authorization server (auth.gogift.io)
+  and on the sandbox authorization server (auth-pre.gogift.io). Both parse as JSON and carry
+  a real issuer/jwks_uri/token_endpoint. No security.txt, no api-catalog, no ai-plugin, no
+  A2A agent card, and no aauth-resource document is served anywhere.
+note: >-
+  gogift.com, www.gogift.com and support.gogift.com answer HTTP 200 with the SAME HTML page
+  body for EVERY /.well-known/* path probed (2.4MB, 216KB and 18.5KB respectively). That is a
+  single-page-app catch-all, not a document; every one of those is recorded as a miss and none
+  of them earns a pointer. Only the two application/json OpenID Connect documents are real.
+hosts:
+  - host: auth.gogift.io
+    role: production authorization server (OpenID Connect / IdentityServer)
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: gogift-openid-configuration.json
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+  - host: auth-pre.gogift.io
+    role: sandbox authorization server
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: gogift-sandbox-openid-configuration.json
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+  - host: api.gogift.io
+    role: production API host
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+  - host: api-pre.gogift.io
+    role: sandbox API host
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+  - host: docs.gogift.io
+    role: API reference / documentation host
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+  - host: global.gogift.com
+    role: corporate website / marketing host
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+  - host: www.global.gogift.com
+    role: corporate website alias
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: gogift.com
+    role: apex domain (SPA catch-all)
+    note: >-
+      Every probed path returned HTTP 200 with an identical 2,447,065-byte HTML body. Soft-200
+      catch-all, not a document. All recorded as misses.
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/api-catalog
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/agent-card.json
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/agent.json
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/aauth-resource.json
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+  - host: www.gogift.com
+    role: consumer shop host (SPA catch-all)
+    note: >-
+      Identical 215,561-byte HTML body returned for every probed path. Soft-200 catch-all.
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/api-catalog
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/agent-card.json
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/agent.json
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+  - host: support.gogift.com
+    role: help centre (Dixa-hosted, SPA catch-all)
+    note: >-
+      Identical 18,562-byte HTML body returned for every probed path. Soft-200 catch-all.
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/api-catalog
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+      - path: /.well-known/agent-card.json
+        status: 200
+        content_type: text/html
+        result: html-shell-not-a-document
+findings:
+  documents_found: 2
+  security_txt: false
+  api_catalog: false
+  ai_plugin: false
+  agent_card: false
+  aauth_resource: false
+  openid_configuration: true
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

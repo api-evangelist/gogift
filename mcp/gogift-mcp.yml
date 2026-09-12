@@ -1,0 +1,166 @@
+generated: '2026-09-12'
+method: derived
+source: https://docs.gogift.io/#rest-api-reference
+sources:
+  - https://docs.gogift.io/#rest-api-reference
+  - https://docs.gogift.io/#filtering-products
+  - https://docs.gogift.io/#product-by-id
+  - https://docs.gogift.io/#creating-a-basket
+  - https://docs.gogift.io/#updating-a-basket
+  - https://docs.gogift.io/#finalizing-a-basket
+provider: GoGift
+providerId: gogift
+status: candidate
+description: >-
+  GoGift operates NO Model Context Protocol server. No hosted MCP endpoint, no stdio package,
+  and no mention of MCP anywhere on docs.gogift.io, global.gogift.com or the GoGift GitHub
+  organization. The tools below are a CANDIDATE mapping derived from the five operations GoGift
+  documents in its REST reference — a proposal for what an MCP server over this API would
+  expose, not a description of anything GoGift ships.
+search_evidence:
+  - checked: https://docs.gogift.io/
+    result: no MCP reference anywhere in the single-page API documentation
+  - checked: https://api.github.com/orgs/GoGift/repos
+    result: one repository, a 2015 Ionic app; no MCP server
+  - checked: web search for "GoGift MCP server"
+    result: no GoGift result
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: derived
+  note: >-
+    mode is `none` because nobody ships a server. No endpoint URL is recorded, because guessing
+    one would read as a verified agent surface that does not exist.
+derivation_basis: >-
+  Derived from the operations documented in prose at docs.gogift.io. GoGift publishes no
+  OpenAPI, so the inputSchema fields below are transcribed from the provider's published
+  parameter tables rather than generated from a machine-readable contract. No operationId
+  exists to bind to — the API has no spec.
+tools:
+  - name: filter_products
+    title: Filter the gift-card catalogue
+    rest:
+      method: POST | GET
+      path: /products/filter
+      host: https://api.gogift.io
+    description: >-
+      Return the products that can be ordered, optionally narrowed by delivery method and by
+      the countries a product must be redeemable in. Paginated.
+    read_only: true
+    inputSchema:
+      salesChannel:
+        type: string
+        required: true
+        description: The sales channel id the product must be purchasable from. GoGift recommends sales channel 109 for general filtering.
+      withDeliveryMethod:
+        type: string
+        required: false
+        enum: [Email, Sms, CsvByEmail, Webhook, Physical]
+      redeemableInCoutries:
+        type: string
+        required: false
+        description: List of ISO 3166 Alpha-2 country codes the product must be redeemable in. Parameter name is misspelled in the provider's own reference and is transcribed verbatim.
+      paging:
+        type: object
+        required: false
+        properties: {page: integer, perPage: integer}
+  - name: get_product
+    title: Get a product and its purchasable inventory
+    rest:
+      method: GET
+      path: /products/{id}
+      host: https://api.gogift.io
+    description: >-
+      Return one product, including its delivery methods and, for each, the inventory entries
+      (SKUs) with fixed or ranged prices. This is the only way to learn a product's prices.
+    read_only: true
+    inputSchema:
+      id:
+        type: string
+        required: true
+        in: path
+  - name: create_basket
+    title: Create a basket
+    rest:
+      method: POST
+      path: /baskets
+      host: https://api.gogift.io
+    description: Open a new basket against a sales channel.
+    read_only: false
+    idempotent: false
+    idempotency_note: The provider does NOT support Idempotency-Key on this operation.
+    inputSchema:
+      salesChannelId:
+        type: string
+        required: true
+  - name: update_basket
+    title: Update a basket
+    rest:
+      method: PUT
+      path: /baskets
+      host: https://api.gogift.io
+    description: >-
+      Add or change the buyer, deliveries, recipients and product lines on an existing basket.
+      This is where the recipient webhook URL is set for Webhook-delivered products.
+    read_only: false
+    idempotent: true
+    idempotency_header: Idempotency-Key
+    inputSchema:
+      id:
+        type: string
+        required: true
+        description: The basket id.
+      buyer:
+        type: BuyerInput
+        required: false
+      products:
+        type: 'ProductInput[]'
+        required: false
+  - name: finalize_basket
+    title: Finalize a basket and place the order
+    rest:
+      method: POST
+      path: /baskets/finalize
+      host: https://api.gogift.io
+    description: >-
+      Commit the basket, selecting a payment method. Returns the next step and, for
+      PSP-mediated payments, the hosted payment window URL. THIS IS THE CONSEQUENTIAL
+      OPERATION — it spends money and, once fulfilled, delivers bearer-value gift cards. The
+      provider documents no cancel, refund or reversal path.
+    read_only: false
+    destructive: false
+    consequential: true
+    idempotent: true
+    idempotency_header: Idempotency-Key
+    reversible: false
+    inputSchema:
+      basketId:
+        type: string
+        required: true
+      paymentMethod:
+        type: string
+        required: true
+        enum: [InvoiceByFinance, ExternalPsp, Trustly]
+      countryCode:
+        type: string
+        required: false
+        description: ISO 3166 country code the user is shopping in.
+      redirectConfig:
+        type: object
+        required: false
+        required_when: paymentMethod is ExternalPsp or Trustly
+        properties: {okUrl: string, failUrl: string, cancelUrl: string}
+tool_count: 5
+auth:
+  model: openid-connect client_credentials
+  detail: authentication/gogift-authentication.yml
+agent_safety_notes:
+  - finalize_basket is irreversible in the published contract; an agent should treat it as terminal.
+  - The outbound delivery webhook carries giftcardUri and pin — bearer-value credentials. Any agent surface relaying it must treat the payload as a secret.
+  - Idempotency covers update and finalize but NOT basket creation; a retried create makes a second basket.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

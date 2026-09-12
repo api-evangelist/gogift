@@ -1,0 +1,111 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/#information-about-webhook-delivery-fulfillment
+sources:
+  - https://docs.gogift.io/#information-about-webhook-delivery-fulfillment
+  - https://docs.gogift.io/#webhookcontent
+  - https://docs.gogift.io/#updating-a-basket
+provider: GoGift
+providerId: gogift
+description: >-
+  GoGift publishes one outbound webhook: delivery fulfilment. When an order is fulfilled and
+  `Webhook` was chosen as the delivery method, GoGift POSTs the fulfilled gift-card payload to
+  a publicly accessible URL the integrator supplied on the basket. This is the provider's only
+  documented event surface.
+asyncapi_published: false
+asyncapi_note: >-
+  GoGift publishes no AsyncAPI document and no event catalog page. Probing /asyncapi.yaml,
+  /asyncapi.json on api.gogift.io and docs.gogift.io returned 404. The webhook catalog below
+  was read from the provider's REST reference; it was NOT converted into a synthetic AsyncAPI
+  document, because authoring one would assert a contract GoGift does not publish.
+direction: outbound
+transport: HTTPS POST
+content_type: application/json
+subscription:
+  model: per-delivery, configured inline on the basket
+  configuration_field: deliveries[].recipientWebhookUrl
+  configured_by: PUT /baskets (Updating a basket)
+  requirement: >-
+    The integrator must supply a valid, publicly accessible URL able to receive POST requests.
+  delivery_method_value: Webhook
+  note: >-
+    `Webhook` is one of the five delivery methods a GoGift product may support (Email, Sms,
+    CsvByEmail, Webhook, Physical). There is no separate webhook-subscription management API,
+    no event-type selection, and no webhook management console documented.
+security:
+  signed: true
+  header: Signature
+  algorithm: hmac-sha256
+  style: >-
+    HTTP Signatures in the draft-cavage-http-signatures-07 style — the Signature header carries
+    keyId / algorithm / signature name-value pairs, with the body digested using SHA-256 and
+    HMAC-signed.
+  secrets:
+    - ClientId
+    - WebhookSecret
+  secrets_issued_by: GoGift
+  validation_example: https://docs.gogift.io/#code-examples
+  source: https://docs.gogift.io/#information-about-webhook-delivery-fulfillment
+delivery_semantics:
+  retries_documented: false
+  ordering_documented: false
+  at_least_once_documented: false
+  timeout_documented: false
+  expected_response_documented: false
+  note: >-
+    GoGift does not publish retry policy, delivery guarantees, expected receiver response
+    status, or a replay/redelivery mechanism for this webhook.
+events:
+  - name: delivery.fulfilled
+    label: Delivery fulfilment
+    documented_name: Webhook delivery fulfillment
+    description: >-
+      Sent when an order's delivery is fulfilled, carrying the issued gift-card credentials so
+      the integrator can present or forward them.
+    method: POST
+    target: integrator-supplied recipientWebhookUrl
+    payload:
+      webhookId:
+        type: string
+        description: The unique identifier of the webhook.
+      timeStamp:
+        type: DateTime
+        description: When the webhook request was dispatched (ISO 8601, UTC).
+      content:
+        type: WebhookContent[]
+        description: One entry per fulfilled gift card.
+      message:
+        type: string
+        description: An informative message regarding the order.
+    content_schema:
+      productId:
+        type: string
+      orderId:
+        type: integer
+      deliveryId:
+        type: integer
+      amountInDecimal:
+        type: number
+      currencyCode:
+        type: string
+        description: ISO 4217 currency code.
+      createdAt:
+        type: DateTime
+      expiresAt:
+        type: DateTime
+        description: When the gift card expires.
+      giftcardUri:
+        type: string
+        description: The URI to be used for retrieval of the gift card.
+      pin:
+        type: string
+        description: The PIN used to verify gift-card retrieval.
+    sensitive: true
+    sensitivity_note: >-
+      This payload carries bearer-value credentials (giftcardUri + pin). Signature validation
+      on the receiving endpoint is not optional.
+    source: https://docs.gogift.io/#information-about-webhook-delivery-fulfillment
+event_count: 1
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

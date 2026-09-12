@@ -1,0 +1,118 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/#authentication
+sources:
+  - https://docs.gogift.io/#authentication
+  - https://docs.gogift.io/#authentication-example
+  - https://auth.gogift.io/.well-known/openid-configuration
+  - well-known/gogift-openid-configuration.json
+provider: GoGift
+providerId: gogift
+description: >-
+  GoGift authenticates every API request with an OpenID Connect access token (a signed JWT)
+  issued by its own IdentityServer-style authorization server. Integrators are issued a client
+  id and client secret by GoGift, exchange them at the token endpoint, and send the resulting
+  token as an HTTP Bearer credential on every call to api.gogift.io. There is no API-key mode
+  and no anonymous surface: the docs state plainly that this is an HTTPS-only API with OpenID
+  authentication and CORS support.
+docs: https://docs.gogift.io/#authentication
+schemes:
+  - id: gogift_oidc
+    type: openIdConnect
+    openIdConnectUrl: https://auth.gogift.io/.well-known/openid-configuration
+    description: >-
+      Production OpenID Connect discovery document. Issuer https://auth.gogift.io, RS256 id
+      tokens, JWKS at https://auth.gogift.io/.well-known/openid-configuration/jwks.
+    environment: production
+  - id: gogift_oidc_sandbox
+    type: openIdConnect
+    openIdConnectUrl: https://auth-pre.gogift.io/.well-known/openid-configuration
+    description: Sandbox OpenID Connect discovery document. Issuer https://auth-pre.gogift.io.
+    environment: sandbox
+  - id: gogift_bearer
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
+    description: >-
+      The access token returned by the token endpoint is presented to api.gogift.io as
+      `Authorization: Bearer <jwt>`. The docs show this header on every documented endpoint.
+    applies_to:
+      - https://api.gogift.io
+      - https://api-pre.gogift.io
+credentials:
+  issued_by: GoGift (client id + client secret are provisioned by GoGift, not self-service)
+  self_service: false
+  note: >-
+    The docs instruct integrators never to share the client secret when contacting GoGift
+    support; a department ID is the identifier GoGift asks for instead.
+flows:
+  - grant_type: client_credentials
+    supported: true
+    primary: true
+    token_endpoint: https://auth.gogift.io/connect/token
+    description: >-
+      Machine-to-machine flow used by server-side integrations. This is the flow the
+      published C#, PHP, Java and Node.js authentication examples demonstrate.
+  - grant_type: authorization_code
+    supported: true
+    authorization_endpoint: https://auth.gogift.io/connect/authorize
+    pkce: true
+    pkce_methods:
+      - S256
+      - plain
+  - grant_type: refresh_token
+    supported: true
+    note: Requires the `offline_access` scope.
+  - grant_type: urn:ietf:params:oauth:grant-type:device_code
+    supported: true
+    device_authorization_endpoint: https://auth.gogift.io/connect/deviceauthorization
+  - grant_type: password
+    supported: true
+    note: Advertised in the discovery document; legacy ROPC grant, not documented for API integrators.
+  - grant_type: implicit
+    supported: true
+    note: Advertised in the discovery document; legacy browser grant.
+endpoints:
+  issuer: https://auth.gogift.io
+  token: https://auth.gogift.io/connect/token
+  authorization: https://auth.gogift.io/connect/authorize
+  userinfo: https://auth.gogift.io/connect/userinfo
+  jwks: https://auth.gogift.io/.well-known/openid-configuration/jwks
+  introspection: https://auth.gogift.io/connect/introspect
+  revocation: https://auth.gogift.io/connect/revocation
+  end_session: https://auth.gogift.io/connect/endsession
+token:
+  format: JWT
+  signing_alg:
+    - RS256
+  transport: Authorization Bearer header
+  expires: true
+  expiry_documented: false
+  expiry_note: >-
+    The docs state "The token has an expiration period so it cannot be used indefinitely" and
+    tell integrators to implement expiry/refresh handling, but do not publish the lifetime.
+client_authentication:
+  - client_secret_basic
+  - client_secret_post
+transport_security:
+  https_only: true
+  cors: true
+  source: https://docs.gogift.io/#overview
+webhook_authentication:
+  mechanism: HMAC-SHA256 request signature
+  header: Signature
+  algorithm: hmac-sha256
+  style: HTTP Signatures (draft-cavage-http-signatures-07 style, keyId/algorithm/signature pairs)
+  secrets_required:
+    - ClientId
+    - WebhookSecret
+  note: >-
+    GoGift signs the outbound delivery-fulfilment webhook. The receiving endpoint validates
+    the `Signature` header using a ClientId and a WebhookSecret issued by GoGift. Reference
+    validation code is published in the docs under "Webhook signature validation".
+  source: https://docs.gogift.io/#information-about-webhook-delivery-fulfillment
+mtls: false
+api_keys: false
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,245 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/
+sources:
+  - https://docs.gogift.io/#overview
+  - https://docs.gogift.io/#content-types
+  - https://docs.gogift.io/#idempotency
+  - https://docs.gogift.io/#pagination
+  - https://docs.gogift.io/#time
+  - https://docs.gogift.io/#localization
+  - https://docs.gogift.io/#breaking-changes
+  - https://auth.gogift.io/.well-known/openid-configuration
+provider: GoGift
+providerId: gogift
+description: >-
+  Cross-cutting runtime semantics for the GoGift REST API, read from the provider's own
+  single-page API reference at docs.gogift.io. GoGift publishes no OpenAPI, so every field
+  below was read from the published prose and parameter tables rather than derived from a
+  machine-readable contract.
+cross_links:
+  authentication: authentication/gogift-authentication.yml
+  scopes: scopes/gogift-scopes.yml
+  errors: errors/gogift-problem-types.yml
+  lifecycle: lifecycle/gogift-lifecycle.yml
+  rate_limits: rate-limits/gogift-rate-limits.yml
+  webhooks: asyncapi/gogift-webhooks.yml
+  data_model: data-model/gogift-data-model.yml
+
+transport:
+  https_only: true
+  cors: true
+  hosts:
+    production_api: https://api.gogift.io
+    production_auth: https://auth.gogift.io
+    sandbox_api: https://api-pre.gogift.io
+    sandbox_auth: https://auth-pre.gogift.io
+
+auth_style:
+  model: openid-connect
+  header: 'Authorization: Bearer <jwt>'
+  token_format: JWT (RS256)
+  api_keys: false
+  detail: See authentication/gogift-authentication.yml
+
+content_types:
+  request: application/json
+  response: application/json
+  applies_to_methods:
+    - POST
+    - PUT
+    - PATCH
+  note: >-
+    "The API expects all writing requests (POST, PUT, PATCH) in JSON format with the
+    Content-Type: application/json header." Responses always carry Content-Type:
+    application/json.
+  source: https://docs.gogift.io/#content-types
+
+idempotency:
+  supported: true
+  coverage: partial
+  mechanism: request header
+  header: Idempotency-Key
+  key_format_recommended: UUID v4 (or another random string with sufficient entropy)
+  key_format_enforced: false
+  retention: P7D
+  retention_prose: >-
+    "The lifespan of idempotent entries is one week. This means that after one week, you can
+    use the same idempotency key as you used previously."
+  body_must_be_stable: true
+  conflict_behaviour: >-
+    Replaying a key with a different request body returns an ArgumentException in the
+    responseStatus envelope: "There is a mismatch between what we have encountered before as a
+    request body and what is being sent for idempotency key \"<key>\"."
+  scope:
+    - PUT /baskets
+    - POST /baskets/finalize
+  not_covered:
+    - POST /baskets
+  coverage_basis: >-
+    The docs state idempotency is supported "on select endpoints (See Updating a basket and
+    Finalizing a basket)". Two of the three documented mutating operations carry the header;
+    basket creation (POST /baskets) does not. That is a scoped mechanism, not a blanket one,
+    so coverage is `partial` and `scope` lists the covered operations.
+  source: https://docs.gogift.io/#idempotency
+
+reversibility:
+  grade: none
+  applicable: true
+  applicable_note: >-
+    The API has a real write surface (basket creation, basket update, basket finalisation,
+    which places a paid order and delivers gift cards), so reversibility is applicable rather
+    than `na`.
+  reversal_operations: []
+  window_stated: false
+  detail: >-
+    GoGift's published REST reference documents NO cancel, refund, void, reverse or delete
+    operation. Once POST /baskets/finalize succeeds, the reference describes the order moving
+    to fulfilment and gift cards being delivered (by email, SMS, CSV, webhook or physically);
+    it describes no API path back. The only "cancel" in the reference is `redirectConfig.cancelUrl`,
+    a browser redirect target used when a human abandons the hosted payment window BEFORE the
+    payment completes — a pre-commit abandonment, not an API reversal of a completed order.
+  pre_commit_abandonment:
+    exists: true
+    mechanism: >-
+      A basket that is created and updated but never finalized places no order. For the
+      ExternalPsp and Trustly payment methods the user can abandon in the hosted payment
+      window and is returned to redirectConfig.cancelUrl.
+    operation: null
+    window: null
+  remediation_for_provider: >-
+    Publish a cancellation/refund endpoint (or state in the reference that reversal is a
+    manual support process) and state the window inside which it works. An agent cannot
+    currently determine from the published contract whether a finalized GoGift order can be
+    taken back.
+  source: https://docs.gogift.io/#finalizing-a-basket
+
+dry_run_mode:
+  supported: false
+  alternative: >-
+    A full sandbox environment (api-pre.gogift.io / auth-pre.gogift.io) is published instead
+    of a per-request dry-run flag. See sandbox/gogift-sandbox.yml.
+
+pagination:
+  style: page-number
+  request_param: paging
+  request_shape:
+    perPage:
+      type: integer
+      required: false
+      default: 50
+      description: Number of items per page.
+    page:
+      type: integer
+      required: false
+      default: 1
+      description: The page to be returned.
+  response_field: pagingInfo
+  response_shape:
+    totalItems: integer — total number of items in the response
+    totalPages: integer — total number of pages the response is spread over
+    perPage: integer — items present per page
+    page: integer — page currently being returned
+  cursor_based: false
+  link_headers: false
+  note: >-
+    Any request that accepts `paging`, or any response that carries `pagingInfo`, is
+    paginated. Default page size is 50.
+  source: https://docs.gogift.io/#pagination
+
+error_envelope:
+  style: custom
+  rfc9457: false
+  problem_json: false
+  field: responseStatus
+  shape:
+    errorCode: string — a .NET-style exception name, e.g. ArgumentException
+    message: string — human-readable explanation
+    stackTrace: string|null
+    errors: array — field-level errors
+    meta: object|null
+  note: >-
+    Errors are returned inside the normal response body under `responseStatus` rather than as
+    an RFC 9457 problem document. On a failed call the domain fields of the response object
+    are present but null. See errors/gogift-problem-types.yml.
+  source: https://docs.gogift.io/#idempotency
+
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata_fields:
+  supported: true
+  fields:
+    - reference
+  note: >-
+    Baskets carry a client-supplied `reference` field usable as a caller-side correlation key.
+
+request_id_tracing:
+  documented: false
+  note: >-
+    No request-id or correlation header is documented. `publicOrderId` and `orderId` are
+    returned on finalisation and are the only published handles for a transaction.
+
+versioning:
+  scheme: none-in-url
+  version_in_path: false
+  version_header: false
+  current_version: unversioned
+  note: >-
+    The documented paths carry no version segment (`/products/filter`, `/baskets`,
+    `/baskets/finalize`). GoGift manages change by notification rather than by URL version —
+    see lifecycle/gogift-lifecycle.yml.
+  breaking_change_policy: >-
+    "While breaking changes are rarely expected, in the case one is released, you will receive
+    a notification from us describing all affected endpoints and the way the requests should
+    be altered."
+  source: https://docs.gogift.io/#breaking-changes
+
+rate_limit_signaling:
+  documented: false
+  headers: []
+  note: >-
+    GoGift's API reference documents no rate limits and no rate-limit response headers, and no
+    429 behaviour. See rate-limits/gogift-rate-limits.yml.
+
+data_conventions:
+  dates:
+    format: ISO 8601
+    timezone: UTC
+    pattern: YYYY-MM-DDThh:mm:ssZ
+    source: https://docs.gogift.io/#time
+  countries:
+    standard: ISO 3166 Alpha-2
+    source: https://docs.gogift.io/#countries
+  currencies:
+    standard: ISO 4217
+    source: https://docs.gogift.io/#currencies
+  languages:
+    standard: ISO 639
+    source: https://docs.gogift.io/#localization
+  localization:
+    style: localized-string-map
+    shape: >-
+      Localizable fields (e.g. product `title`) are objects keyed by ISO 639 language code,
+      with null for languages that have no translation, e.g.
+      {"title": {"en": "...", "da": "...", "sv": null}}.
+    source: https://docs.gogift.io/#localization
+  money:
+    representation: decimal amount plus ISO 4217 currency code
+    fields:
+      - amountInDecimal
+      - currencyCode
+      - giftcardValue
+
+catalogue_stability:
+  hardcoding_discouraged: true
+  note: >-
+    "We do not recommend hardcoding any products, skus, or prices ... New products are added
+    and existing ones can be discontinued ... seasonal gift cards, tickets, experiences and
+    micro gifts ... are usually adjusted at least annually."
+  source: https://docs.gogift.io/#catalogue-changes
+
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

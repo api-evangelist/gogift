@@ -1,0 +1,94 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/#breaking-changes
+sources:
+  - https://docs.gogift.io/#breaking-changes
+  - https://docs.gogift.io/#catalogue-changes
+  - https://docs.gogift.io/#idempotency
+provider: GoGift
+providerId: gogift
+description: >-
+  Lifecycle posture for the GoGift API, read from the provider's own reference. GoGift runs an
+  unversioned API and manages change by direct notification to integrators rather than by URL
+  versioning, a dated changelog, or RFC 8594 Sunset/Deprecation headers.
+versioning:
+  scheme: unversioned
+  version_in_path: false
+  version_in_header: false
+  version_in_query: false
+  current_version: null
+  note: >-
+    Every documented path is unversioned (/products/filter, /products/{id}, /baskets,
+    /baskets/finalize). There is no published version identifier for the API surface.
+change_policy:
+  published: true
+  type: notification-on-breaking-change
+  statement: >-
+    "While breaking changes are rarely expected, in the case one is released, you will receive
+    a notification from us describing all affected endpoints and the way the requests should be
+    altered to accomodate the new changes."
+  channel: direct notification from GoGift to the integrator
+  advance_notice_period: not stated
+  source: https://docs.gogift.io/#breaking-changes
+deprecation_policy:
+  published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No deprecation policy, no deprecation window, and no RFC 8594 Sunset/Deprecation response
+    headers are documented. The nearest published statement is the catalogue-change notice
+    below, which governs PRODUCTS being discontinued rather than API operations being retired.
+catalogue_lifecycle:
+  published: true
+  statement: >-
+    "We do not recommend hardcoding any products, skus, or prices. If you do please be aware
+    that our catalogue is subject to changes. New products are added and existing ones can be
+    discontinued. Similarly certain products are subject to price changes e.g. seasonal gift
+    cards, tickets, experiences and micro gifts. These type of products are usually adjusted at
+    least annually."
+  cadence: at least annually for price-volatile product classes
+  guidance_to_consumers: do not hardcode product ids, SKUs or prices
+  source: https://docs.gogift.io/#catalogue-changes
+deprecated_operations: []
+deprecated_operations_note: >-
+  No operation in the published reference is marked deprecated. There is no OpenAPI to derive
+  `deprecated: true` flags from.
+changelog:
+  published: false
+  url: null
+  note: >-
+    No dated changelog or release-notes page is published for the API. docs.gogift.io is a
+    single-page reference with no revision history, and no /changelog or /release-notes path
+    exists on the docs or marketing hosts.
+status_page:
+  published: false
+  url: null
+  probes:
+    - url: https://status.gogift.io/
+      status: 0
+      result: DNS does not resolve
+    - url: https://status.gogift.com/
+      status: 0
+      result: DNS does not resolve
+  note: >-
+    GoGift operates no public status page. No uptime, incident history or subscription channel
+    is published for api.gogift.io.
+sla:
+  published: false
+  uptime_target: null
+  note: >-
+    No public SLA or uptime commitment is published. GoGift's marketing material describes
+    high-volume processing but states no numeric availability target.
+retention:
+  idempotency_entries: P7D
+  source: https://docs.gogift.io/#idempotency
+gaps:
+  - No dated changelog.
+  - No status page.
+  - No deprecation policy or Sunset/Deprecation headers.
+  - No published SLA.
+  - No API version identifier.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

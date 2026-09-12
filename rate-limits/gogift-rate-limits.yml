@@ -4,85 +4,50 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: GoGift
 providerId: gogift
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
+modified: '2026-09-12'
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/
+sources:
+  - https://docs.gogift.io/#overview
+  - https://docs.gogift.io/#rest-api-reference
+  - https://global.gogift.com/en/gift-card-api
 tags:
   - Gift Cards
   - Rate Limiting
-  - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the GoGift API surface. Captures per-tier quotas,
-  burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to be replaced
-  with published provider limits.
+description: >-
+  GoGift publishes NO rate limits for its API. Its single-page reference at docs.gogift.io was
+  read end to end: there is no rate-limit section, no quota table, no 429 behaviour, no
+  Retry-After guidance, and no RateLimit-* or X-RateLimit-* response header documented anywhere.
+  The pricing page publishes no request quotas either — GoGift charges the face value of the
+  rewards sent, not per API call.
+note: >-
+  This file previously carried a 2026-05-04 bulk-sweep SCAFFOLD with invented free/professional/
+  enterprise tiers (10 rpm / 100 rpm / 1000 rpm and monthly quotas) and an invented set of
+  X-RateLimit-* headers. None of that was published by GoGift. It has been replaced with the
+  honest measured result: limit_count 0. An honest zero is data; a fabricated tier table is not.
+limit_count: 0
+limits: []
 headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
-responseCodes:
-  throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
-limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - GoGift
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - GoGift
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - GoGift
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - GoGift
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - GoGift
-policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
+  documented: false
+  limit: null
+  remaining: null
+  reset: null
+  retryAfter: null
+  policy: null
+response_codes:
+  throttled: null
+  documented: false
+policies: []
+findings:
+  - No rate limits are published for api.gogift.io.
+  - No rate-limit response headers are documented, so an agent has no runtime signal to back off on.
+  - No 429 or throttling behaviour is described.
+  - Quotas, if any, are set contractually when GoGift provisions a client id and secret.
+remediation_for_provider: >-
+  Publishing the per-client request ceiling and returning RateLimit-Limit / RateLimit-Remaining /
+  RateLimit-Reset (or Retry-After on 429) would give integrators — and any agent calling this
+  API — a runtime signal they currently do not have.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

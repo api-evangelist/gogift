@@ -1,0 +1,148 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  Registry searches across npm, PyPI, NuGet, Maven Central, RubyGems, Packagist and crates.io
+  for "gogift", plus the GoGift GitHub organization and the code-examples section of
+  https://docs.gogift.io/
+sources:
+  - https://registry.npmjs.org/-/v1/search?text=gogift
+  - https://pypi.org/pypi/gogift/json
+  - https://azuresearch-usnc.nuget.org/query?q=gogift
+  - https://search.maven.org/solrsearch/select?q=gogift
+  - https://rubygems.org/api/v1/search.json?query=gogift
+  - https://packagist.org/search.json?q=gogift
+  - https://crates.io/api/v1/crates?q=gogift
+  - https://api.github.com/orgs/GoGift/repos
+  - https://docs.gogift.io/#code-examples
+provider: GoGift
+providerId: gogift
+description: >-
+  GoGift publishes NO first-party client library on any package registry. Every registry named
+  above was queried unauthenticated and returned zero results for "gogift". What the provider
+  ships instead is a set of copy-paste code examples in its API reference (C#, PHP, Java,
+  Node.js) built on THIRD-PARTY OpenID Connect libraries. Those libraries are recorded below
+  with `official: false` because they belong to other maintainers — they are integration
+  guidance, not a GoGift SDK.
+official_package_count: 0
+package_count: 0
+sdk_count: 0
+packages: []
+registry_results:
+  - registry: npm
+    query: gogift
+    total: 0
+    checked: '2026-09-12'
+  - registry: pypi
+    query: gogift
+    result: 404 Not Found
+    checked: '2026-09-12'
+  - registry: nuget
+    query: gogift
+    total: 0
+    checked: '2026-09-12'
+  - registry: maven-central
+    query: gogift
+    total: 0
+    checked: '2026-09-12'
+  - registry: rubygems
+    query: gogift
+    total: 0
+    checked: '2026-09-12'
+  - registry: packagist
+    query: gogift
+    total: 0
+    checked: '2026-09-12'
+  - registry: crates.io
+    query: gogift
+    total: 0
+    checked: '2026-09-12'
+github_organization:
+  url: https://github.com/GoGift
+  http_status: 200
+  public_repos: 1
+  repo: GoGift/GoGift
+  repo_language: JavaScript
+  repo_created: '2015-01-31'
+  repo_last_push: '2015-02-01'
+  repo_description: null
+  contains_sdk: false
+  note: >-
+    The github.com/GoGift organization holds one repository — an Ionic/Cordova mobile app
+    scaffold named "gogift", last pushed 2015-02-01, with no description, no homepage, no
+    topics and a one-line README. It contains no API client. The organization carries no
+    company metadata (no name, blog, location or email), so it is name-matched to this company
+    but NOT independently confirmed as GoGift A/S. It is recorded here as an observation, not
+    as evidence of a first-party SDK.
+documented_third_party_dependencies:
+  note: >-
+    These are the libraries GoGift's own code examples import. They are published by other
+    maintainers; GoGift neither ships nor versions them. Version/published fields below were
+    read from each registry's metadata endpoint on 2026-09-12.
+  entries:
+    - name: IdentityModel
+      language: C# / .NET
+      registry: nuget
+      url: https://www.nuget.org/packages/IdentityModel
+      official: false
+      maintainer: Duende Software / IdentityModel contributors
+      pinned_by_provider: 4.6.0
+      pinned_by_provider_source: https://docs.gogift.io/#code-examples
+      version: 7.0.0
+      published: null
+      published_note: >-
+        Publication date not read; NuGet's flat-container index returns versions without dates
+        and the registration page for this id was not retrieved. Recorded as null rather than guessed.
+      decay_signal: true
+      decay_note: >-
+        GoGift's reference states "The version of the library that should be used is 4.6.0".
+        The current release on NuGet is 7.0.0 — three major versions ahead. The provider's
+        published integration guidance is pinned to a library release it has not revisited.
+    - name: OpenID-Connect-PHP
+      package: jumbojett/openid-connect-php
+      language: PHP
+      registry: packagist
+      url: https://packagist.org/packages/jumbojett/openid-connect-php
+      official: false
+      maintainer: jumbojett
+      pinned_by_provider: null
+      version: v1.0.2
+      published: '2024-09-13'
+    - name: Guzzle
+      package: guzzlehttp/guzzle
+      language: PHP
+      registry: packagist
+      url: https://docs.guzzlephp.org/en/stable/
+      official: false
+      pinned_by_provider: null
+      version: null
+      published: null
+      published_note: >-
+        Version not read; the GoGift example links the Guzzle documentation rather than naming
+        a release, so there is no provider-pinned version to compare against.
+    - name: Nimbus OAuth 2.0 SDK with OpenID Connect extensions
+      package: com.nimbusds:oauth2-oidc-sdk
+      language: Java
+      registry: maven-central
+      url: https://connect2id.com/products/nimbus-oauth-openid-connect-sdk
+      official: false
+      maintainer: Connect2id
+      pinned_by_provider: null
+      version: '11.26'
+      published: '2025-06-17'
+    - name: openid-client
+      language: JavaScript / Node.js
+      registry: npm
+      url: https://www.npmjs.com/package/openid-client
+      official: false
+      maintainer: panva
+      pinned_by_provider: null
+      version: 6.8.8
+      published: '2026-09-05'
+cli: false
+findings:
+  - GoGift ships no official SDK in any language on any public registry.
+  - Integration is copy-paste from the reference using third-party OIDC libraries.
+  - The .NET example pins IdentityModel 4.6.0 while the current release is 7.0.0 — the strongest decay signal available for this provider's developer-facing material.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

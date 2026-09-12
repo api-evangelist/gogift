@@ -1,0 +1,74 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/#idempotency
+sources:
+  - https://docs.gogift.io/#idempotency
+  - https://docs.gogift.io/#content-types
+provider: GoGift
+providerId: gogift
+format: custom
+rfc9457: false
+description: >-
+  GoGift returns errors inside the normal JSON response body under a `responseStatus`
+  envelope rather than as an RFC 9457 `application/problem+json` document. On a failed call the
+  domain fields of the response object are still present but null, and `responseStatus` carries
+  the machine-readable error code and a human message.
+note: >-
+  GoGift publishes NO error-code reference page. Only one concrete error is documented by
+  example — the idempotency-key/body mismatch conflict shown in the API reference. The catalog
+  below records exactly that one documented error plus the envelope shape; it does not
+  enumerate an error registry, because the provider does not publish one. This is an honest
+  gap, not an omission by this pipeline.
+envelope:
+  field: responseStatus
+  content_type: application/json
+  http_status_carries_error: unknown
+  http_status_note: >-
+    The published example shows the error envelope in the response body; the docs do not state
+    which HTTP status code accompanies it.
+  fields:
+    - name: errorCode
+      type: string
+      description: Machine-readable code. The one published example uses a .NET exception name (ArgumentException).
+    - name: message
+      type: string
+      description: Human-readable explanation of the failure.
+    - name: stackTrace
+      type: string|null
+      description: Null in published examples.
+    - name: errors
+      type: array
+      description: Field-level errors; empty array in the published example.
+    - name: meta
+      type: object|null
+      description: Null in published examples.
+problem_types:
+  - id: ArgumentException
+    code: ArgumentException
+    title: Idempotency key / request body mismatch
+    documented_operations:
+      - PUT /baskets
+      - POST /baskets/finalize
+    envelope_field: responseStatus.errorCode
+    message: >-
+      There is a mismatch between what we have encountered before as a request body and what is
+      being sent for idempotency key "<key>". Please ensure that the provided request body does
+      not change for a request with an already provided idempotency key.
+    cause: >-
+      The same Idempotency-Key header was replayed with a different request body inside the
+      one-week idempotency retention window.
+    remediation: >-
+      Keep the request body byte-stable across every retry that reuses an idempotency key, or
+      mint a new key for a genuinely different request. Idempotent entries expire after one
+      week, after which the key may be reused.
+    source: https://docs.gogift.io/#idempotency
+    method: searched
+error_code_count: 1
+error_registry_published: false
+gaps:
+  - No error-code reference or status-code table is published.
+  - No mapping from HTTP status code to errorCode is stated.
+  - Validation error shape (`errors[]` contents) is never shown populated.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

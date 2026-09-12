@@ -1,0 +1,70 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/#overview
+sources:
+  - https://docs.gogift.io/#overview
+  - https://docs.gogift.io/#authentication
+  - https://auth-pre.gogift.io/.well-known/openid-configuration
+  - https://global.gogift.com/en/gift-card-api
+provider: GoGift
+providerId: gogift
+description: >-
+  GoGift publishes a full, separately-hosted sandbox ("Pre") environment that mirrors the
+  production API and authorization server. Integrators test the complete purchase flow there —
+  authentication, catalogue filtering, basket creation and update, and basket finalisation —
+  before being moved to production. The marketing page for the gift-card API states that
+  sandbox testing is part of the standard onboarding path.
+mode: separate-environment
+separate_hosts: true
+environments:
+  - name: Sandbox
+    label: Pre
+    api_base_url: https://api-pre.gogift.io
+    auth_base_url: https://auth-pre.gogift.io
+    openid_configuration: https://auth-pre.gogift.io/.well-known/openid-configuration
+    openid_configuration_status: 200
+    issuer: https://auth-pre.gogift.io
+    credentials: separate client id + client secret issued by GoGift
+    self_service_signup: false
+  - name: Production
+    api_base_url: https://api.gogift.io
+    auth_base_url: https://auth.gogift.io
+    openid_configuration: https://auth.gogift.io/.well-known/openid-configuration
+    openid_configuration_status: 200
+    issuer: https://auth.gogift.io
+    credentials: separate client id + client secret issued by GoGift
+    self_service_signup: false
+key_prefixes:
+  documented: false
+  note: >-
+    GoGift does not distinguish test from live credentials by key prefix. The environment is
+    selected by which host you call and which client id/secret you were issued.
+test_values:
+  published: false
+  test_cards: []
+  test_identifiers: []
+  note: >-
+    No test cards, magic identifiers, fixture values or trigger tooling are published. The
+    sandbox catalogue and payment methods are exercised with real GoGift-issued sandbox
+    credentials; nothing about their contents is documented publicly.
+test_clock:
+  supported: false
+fixtures:
+  supported: false
+access:
+  self_service: false
+  requires_contact: true
+  how_to_get_access:
+    - https://global.gogift.com/en/create-account
+    - https://global.gogift.com/en/contact
+    - https://global.gogift.com/en/demo
+  note: >-
+    Sandbox credentials are provisioned by GoGift. There is no self-service developer signup
+    that yields API credentials; the published route is a business account or a sales contact.
+gaps:
+  - No published test data (no sample product ids, sales channel fixtures, or test payment instruments).
+  - No self-service sandbox credential issuance.
+  - Sandbox catalogue contents are undocumented.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

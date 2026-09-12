@@ -1,68 +1,170 @@
 aid: gogift
 name: GoGift
 description: >-
-  Do you need a technology solution to easily order and send digital gift cards? GoGift
-  has a gift card API for that. Instantly send gift cards with a simple API integration!
+  GoGift is a global digital gift-card and rewards distributor that sells and delivers gift
+  cards from thousands of brands across more than a hundred markets. Its REST API lets a
+  business filter that catalogue by sales channel, delivery method and the countries a reward
+  must be redeemable in, build a basket of gift cards for named recipients, and finalize it
+  into a paid order that GoGift fulfils by email, SMS, CSV, webhook or physical post. The API
+  is HTTPS-only and JSON-only, authenticated with OpenID Connect client credentials against
+  auth.gogift.io, and served unversioned from api.gogift.io with a full sandbox at
+  api-pre.gogift.io. GoGift supports idempotent replay on basket update and finalisation, page
+  -number pagination, ISO 8601 / 3166 / 4217 / 639 data conventions, and one signed outbound
+  webhook that carries the issued gift-card credentials back to the integrator.
 type: Index
 deliveryModel:
   model: unknown
   open_source: false
-  commercial: false
-  callable_host: false
-  label: Delivery model not determined — needs a product licence on record
-  confidence: low
+  commercial: true
+  callable_host: true
+  label: Commercial API with a callable production host, credentials issued by the provider
+  confidence: medium
   source:
-  - none
-  generated: '2026-08-28'
-  method: derived
+    - https://docs.gogift.io/
+    - https://global.gogift.com/en/pricing
+  generated: '2026-09-12'
+  method: searched
 accessModel:
-  pricing: freemium
-  onboarding: unknown
+  pricing: contact-sales
+  onboarding: provider-issued-credentials
   trial: false
   try_now: false
   public: false
-  label: Freemium
-  confidence: medium
+  label: Credentials issued by GoGift; no self-service API signup
+  confidence: high
   source:
-  - plans
-  generated: '2026-07-22'
-  method: derived
+    - https://global.gogift.com/en/pricing
+    - https://docs.gogift.io/#authentication
+  generated: '2026-09-12'
+  method: searched
 position: Consuming
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/gogift.png
 tags:
   - Gift Cards
+  - Rewards
+  - Incentives
+  - Loyalty
+  - Commerce
+  - Payments
+  - Employee Recognition
 created: '2025-02-08'
-modified: '2026-04-28'
+modified: '2026-09-12'
 url: >-
   https://raw.githubusercontent.com/api-evangelist/gogift/refs/heads/main/apis.yml
 specificationVersion: '0.23'
 apis:
   - aid: gogift:gogift
-    name: GoGift
+    name: GoGift Commerce API
     description: >-
-      Do you need a technology solution to easily order and send digital gift cards?
-      GoGift has a gift card API for that. Instantly send gift cards with a simple
-      API integration!
-    humanURL: https://www.global.gogift.com/gift-card-api
+      The GoGift REST API for buying and sending digital gift cards. Five documented operations
+      cover the purchase flow end to end: filter the product catalogue, read a product and its
+      purchasable inventory, create a basket, update the basket with buyer, recipients and
+      product lines, and finalize the basket into a paid order. Delivery is by email, SMS, CSV
+      by email, signed webhook or physical post. Authentication is OpenID Connect
+      client_credentials against auth.gogift.io, and every request carries a JWT bearer token.
+    humanURL: https://docs.gogift.io/
+    baseURL: https://api.gogift.io
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/gogift.png
     tags:
       - Gift Cards
+      - Rewards
+      - Commerce
     properties:
       - type: Documentation
-        url: https://www.global.gogift.com/gift-card-api
+        url: https://docs.gogift.io/
+      - type: APIReference
+        url: https://docs.gogift.io/#rest-api-reference
+      - type: Authentication
+        url: authentication/gogift-authentication.yml
+      - type: OAuthScopes
+        url: scopes/gogift-scopes.yml
+      - type: OpenIDConnect
+        url: https://auth.gogift.io/.well-known/openid-configuration
+      - type: Conventions
+        url: conventions/gogift-conventions.yml
+      - type: Idempotency
+        url: conventions/gogift-conventions.yml
+      - type: ErrorCatalog
+        url: errors/gogift-problem-types.yml
+      - type: Webhooks
+        url: asyncapi/gogift-webhooks.yml
+      - type: DataModel
+        url: data-model/gogift-data-model.yml
+      - type: Sandbox
+        url: sandbox/gogift-sandbox.yml
+      - type: RateLimits
+        url: rate-limits/gogift-rate-limits.yml
 common:
-  - type: DomainSecurity
-    url: security/gogift-domain-security.yml
+  - type: Website
+    url: https://global.gogift.com/
+  - type: DeveloperPortal
+    url: https://docs.gogift.io/
+  - type: Documentation
+    url: https://docs.gogift.io/
+  - type: APIReference
+    url: https://docs.gogift.io/#rest-api-reference
+  - type: GettingStarted
+    url: https://global.gogift.com/en/get-started
+  - type: Support
+    url: https://support.gogift.com/en
+  - type: Blog
+    url: https://global.gogift.com/en/blog
+  - type: Pricing
+    url: https://global.gogift.com/en/pricing
+  - type: SignUp
+    url: https://global.gogift.com/en/create-account
+  - type: TermsOfService
+    url: https://support.gogift.com/en/article/dc0cc2
+  - type: PrivacyPolicy
+    url: https://support.gogift.com/en/article/355f71
   - type: GitHubOrganization
     url: https://github.com/GoGift
   - type: LinkedIn
     url: https://www.linkedin.com/company/gogift
-  - type: Website
-    url: https://www.global.gogift.com/
-  - type: Documentation
-    url: https://www.global.gogift.com/gift-card-api
-  - url: https://www.global.gogift.com/blog-feed.xml
-    type: Blog
+  - type: Authentication
+    url: authentication/gogift-authentication.yml
+  - type: OAuthScopes
+    url: scopes/gogift-scopes.yml
+  - type: OpenIDConnect
+    url: https://auth.gogift.io/.well-known/openid-configuration
+  - type: WellKnown
+    url: well-known/gogift-well-known.yml
+  - type: Conventions
+    url: conventions/gogift-conventions.yml
+  - type: Idempotency
+    url: conventions/gogift-conventions.yml
+  - type: ErrorCatalog
+    url: errors/gogift-problem-types.yml
+  - type: Webhooks
+    url: asyncapi/gogift-webhooks.yml
+  - type: DataModel
+    url: data-model/gogift-data-model.yml
+  - type: Conformance
+    url: conformance/gogift-conformance.yml
+  - type: Sandbox
+    url: sandbox/gogift-sandbox.yml
+  - type: Lifecycle
+    url: lifecycle/gogift-lifecycle.yml
+  - type: Packages
+    url: packages/gogift-packages.yml
+  - type: X-MCPServerCandidate
+    url: mcp/gogift-mcp.yml
+  - type: LLMsTxt
+    url: llms/gogift-llms.txt
+  - type: Plans
+    url: plans/gogift-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/gogift-rate-limits.yml
+  - type: FinOps
+    url: finops/gogift-finops.yml
+  - type: DomainSecurity
+    url: security/gogift-domain-security.yml
+x-enrichment:
+  date: '2026-09-12'
+  status: enriched
+  artifacts_added: 15
+  pass: local-v3
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

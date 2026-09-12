@@ -1,0 +1,177 @@
+generated: '2026-09-12'
+method: searched
+source: https://docs.gogift.io/
+sources:
+  - https://docs.gogift.io/#overview
+  - https://docs.gogift.io/#authentication
+  - https://docs.gogift.io/#idempotency
+  - https://docs.gogift.io/#pagination
+  - https://docs.gogift.io/#time
+  - https://docs.gogift.io/#countries
+  - https://docs.gogift.io/#currencies
+  - https://docs.gogift.io/#localization
+  - https://auth.gogift.io/.well-known/openid-configuration
+provider: GoGift
+providerId: gogift
+description: >-
+  Cross-cutting standards the GoGift API conforms to, each with the evidence that establishes
+  it. Every `conforms: true` entry below is backed either by the provider's own live OpenID
+  Connect discovery document or by an explicit statement in the published API reference.
+  Entries marked `conforms: false` are recorded because their absence is a real, useful finding
+  — not to pad the list.
+conformance:
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration
+    detail: >-
+      Live discovery document advertises token, authorization, introspection, revocation and
+      device-authorization endpoints with client_credentials, authorization_code, refresh_token,
+      implicit, password and device_code grants.
+  - id: oidc
+    name: OpenID Connect Core 1.0
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration
+    detail: >-
+      Issuer, jwks_uri, userinfo_endpoint, end_session_endpoint, RS256 id_token signing, and the
+      standard openid/profile/email/address/offline_access scopes are all advertised. The API
+      reference calls the mechanism "OpenID authentication" outright.
+  - id: oidc-discovery
+    name: OpenID Connect Discovery 1.0
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration
+    detail: HTTP 200, application/json, served at the RFC-specified /.well-known path on both production and sandbox issuers.
+  - id: rfc7519-jwt
+    name: 'RFC 7519: JSON Web Token'
+    conforms: true
+    evidence: https://docs.gogift.io/#authentication
+    detail: >-
+      The reference states the client receives a JSON Web Token (JWT) used on all subsequent API
+      requests, and links RFC 7519 directly.
+  - id: rfc7517-jwks
+    name: 'RFC 7517: JSON Web Key Set'
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration/jwks
+    detail: jwks_uri is advertised in the discovery document.
+  - id: rfc7636-pkce
+    name: 'RFC 7636: Proof Key for Code Exchange'
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration
+    detail: code_challenge_methods_supported advertises S256 and plain.
+  - id: rfc8628-device-flow
+    name: 'RFC 8628: OAuth 2.0 Device Authorization Grant'
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration
+    detail: device_authorization_endpoint present; urn:ietf:params:oauth:grant-type:device_code in grant_types_supported.
+  - id: rfc7662-introspection
+    name: 'RFC 7662: OAuth 2.0 Token Introspection'
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration
+    detail: introspection_endpoint https://auth.gogift.io/connect/introspect.
+  - id: rfc7009-revocation
+    name: 'RFC 7009: OAuth 2.0 Token Revocation'
+    conforms: true
+    evidence: https://auth.gogift.io/.well-known/openid-configuration
+    detail: revocation_endpoint https://auth.gogift.io/connect/revocation.
+  - id: rfc6750-bearer
+    name: 'RFC 6750: Bearer Token Usage'
+    conforms: true
+    evidence: https://docs.gogift.io/#idempotency
+    detail: 'Every documented request example carries the header: Authorization Bearer <jwt>.'
+  - id: idempotency
+    name: Idempotent request replay (Idempotency-Key header)
+    conforms: true
+    partial: true
+    evidence: https://docs.gogift.io/#idempotency
+    detail: >-
+      Idempotency-Key header with a one-week retention window and body-stability enforcement, but
+      only on PUT /baskets and POST /baskets/finalize — not on POST /baskets. Coverage is
+      `partial`; see conventions/gogift-conventions.yml.
+  - id: pagination
+    name: Page-number pagination
+    conforms: true
+    evidence: https://docs.gogift.io/#pagination
+    detail: 'Request paging {page, perPage}; response pagingInfo {totalItems, totalPages, perPage, page}. Default page size 50.'
+  - id: http-signatures
+    name: HTTP Signatures (draft-cavage-http-signatures-07)
+    conforms: true
+    evidence: https://docs.gogift.io/#information-about-webhook-delivery-fulfillment
+    detail: >-
+      Outbound delivery-fulfilment webhooks carry a `Signature` header with keyId/algorithm/
+      signature pairs, hmac-sha256 over a SHA-256 digest of the body. The reference links
+      draft-cavage-http-signatures-07 section 4.1 directly.
+  - id: iso8601
+    name: 'ISO 8601: date and time format'
+    conforms: true
+    evidence: https://docs.gogift.io/#time
+    detail: '"All dates are displayed and expected to be in ISO 8601 format in the UTC timezone: YYYY-MM-DDThh:mm:ssZ".'
+  - id: iso3166
+    name: 'ISO 3166: country codes'
+    conforms: true
+    evidence: https://docs.gogift.io/#countries
+    detail: countryCode and redeemableInCountries use ISO 3166 Alpha-2 codes.
+  - id: iso4217
+    name: 'ISO 4217: currency codes'
+    conforms: true
+    evidence: https://docs.gogift.io/#currencies
+    detail: '"Currencies in the GoGift API are served and handled following the ISO 4217 standard."'
+  - id: iso639
+    name: 'ISO 639: language codes'
+    conforms: true
+    evidence: https://docs.gogift.io/#localization
+    detail: Localized fields are maps keyed by ISO 639 language code.
+  - id: cors
+    name: Cross-Origin Resource Sharing
+    conforms: true
+    evidence: https://docs.gogift.io/#overview
+    detail: '"This is an HTTPS-only API, with OpenID authentication and CORS support."'
+  - id: rfc9457
+    name: 'RFC 9457: Problem Details for HTTP APIs'
+    conforms: false
+    evidence: https://docs.gogift.io/#idempotency
+    detail: >-
+      Errors are returned in a proprietary `responseStatus` envelope inside a 200-shaped response
+      body, not as application/problem+json.
+  - id: openapi
+    name: OpenAPI Specification
+    conforms: false
+    evidence: https://docs.gogift.io/
+    detail: >-
+      No OpenAPI or Swagger document is published anywhere. Probed /openapi.json, /openapi.yaml,
+      /swagger.json, /swagger/v1/swagger.json, /v1/openapi.json, /api-docs, /swagger, /docs and
+      /redoc on api.gogift.io, api-pre.gogift.io, auth.gogift.io, auth-pre.gogift.io and
+      docs.gogift.io — every one returned 404.
+  - id: asyncapi
+    name: AsyncAPI Specification
+    conforms: false
+    evidence: https://docs.gogift.io/#information-about-webhook-delivery-fulfillment
+    detail: A real outbound webhook is documented in prose; no AsyncAPI document is published.
+  - id: rfc8594
+    name: 'RFC 8594: The Sunset HTTP Header Field'
+    conforms: false
+    evidence: https://docs.gogift.io/#breaking-changes
+    detail: Change is communicated by direct notification; no Sunset or Deprecation headers are documented.
+  - id: rfc9116
+    name: 'RFC 9116: A File Format to Aid in Security Vulnerability Disclosure'
+    conforms: false
+    evidence: well-known/gogift-well-known.yml
+    detail: No /.well-known/security.txt is served on any GoGift host.
+domain_standards:
+  applicable: false
+  note: >-
+    The gift-card / rewards-distribution market this API serves has no machine-readable domain
+    standard of the kind `domain_standard_conformance` rewards (no SCIM URN, OData $metadata,
+    OpenRTB, Sparkplug, LTI/OneRoster, OAI-PMH, HL7v2/X12/ISO-20022 message type or equivalent),
+    and the GoGift contract declares none. Recorded as not-applicable rather than as a failure.
+  probed_for:
+    - iso-20022 message types — absent; GoGift settles by invoice or by delegating to a PSP/Trustly, and publishes no financial-messaging surface
+    - x12 / EDIFACT — absent
+    - openrtb — not applicable to this market
+certifications:
+  published: false
+  note: >-
+    No trust centre, and no SOC 2 / ISO 27001 / PCI DSS certification is published on any
+    GoGift-controlled host reachable without a login. See security/gogift-trust-center.yml if present.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
