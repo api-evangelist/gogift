@@ -2,11 +2,14 @@
   "repo": "gogift",
   "feeds": [
     {
-      "source": "https://www.global.gogift.com/blog-feed.xml",
-      "error": "HTTPError"
+      "source": "https://support.gogift.com/en",
+      "feed_url": "https://support.gogift.com/en",
+      "title": "",
+      "saved": 0,
+      "method": "none"
     }
   ],
-  "fetched": "2026-09-06T19:17:18Z",
+  "fetched": "2026-09-13T13:00:00Z",
   "post_count": 36,
   "feed_nature": "undetermined",
   "feed_nature_basis": null,
