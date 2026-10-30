@@ -1,4 +1,4 @@
-# GoGift (gogift)
+# GoGift
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,48 +64,132 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Do you need a technology solution to easily order and send digital gift cards? GoGift has a gift card API for that. Instantly send gift cards with a simple API integration! 
+GoGift is a global digital gift-card and rewards distributor that sells and delivers gift cards from thousands of brands across more than a hundred markets. Its REST API lets a business filter that catalogue by sales channel, delivery method and the countries a reward must be redeemable in, build a basket of gift cards for named recipients, and finalize it into a paid order that GoGift fulfils by email, SMS, CSV, webhook or physical post. The API is HTTPS-only and JSON-only, authenticated with OpenID Connect client credentials against auth.gogift.io, and served unversioned from api.gogift.io with a full sandbox at api-pre.gogift.io. GoGift supports idempotent replay on basket update and finalisation, page -number pagination, ISO 8601 / 3166 / 4217 / 639 data conventions, and one signed outbound webhook that carries the issued gift-card credentials back to the integrator.
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/gogift/refs/heads/main/apis.yml)
+**Areas:** Gift Cards · Rewards · Incentives · Loyalty · Commerce · Payments · Employee Recognition · Loyalty & Incentives
 
-## Scope
+## GoGift on APIs.io
 
-- **Type:** Index 
-- **Position:** Consuming 
-- **Access:** 3rd-Party 
+Everything profiled for GoGift is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/gogift/](https://apis.io/providers/gogift/)** — or go straight to one of the APIs or properties below.
 
-## Tags:
+### APIs (1)
 
- - API, Gift Cards
+- [GoGift Commerce API](https://apis.io/apis/gogift/gogift/) — The GoGift REST API for buying and sending digital gift cards. Five documented operations cover the purchase flow end to end: filter the product catalogue,…
 
-## Timestamps
+### Published properties
 
-- **Created:** 2025-02-08 
-- **Modified:** 2026-04-28 
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### AsyncAPI (1)
 
-### GoGift
-Do you need a technology solution to easily order and send digital gift cards? GoGift has a gift card API for that. Instantly send gift cards with a simple API integration! 
+Event-driven and webhook contracts.
 
-**Human URL:** [https://www.global.gogift.com/gift-card-api](https://www.global.gogift.com/gift-card-api)
+- [Gogift Webhooks](https://apis.io/asyncapis/gogift/gogift-webhooks/)
 
+#### MCP servers (1)
 
-#### Tags:
+Model Context Protocol servers that expose the API to agents.
 
- - API, Gift Cards
+- [gogift-mcp.yml](https://apis.io/servers/gogift/gogift-mcp-yml/)
 
-#### Properties
+#### Security (2)
 
-- [Documentation](https://www.global.gogift.com/gift-card-api)
+Authentication, trust centre, and vulnerability disclosure.
 
-## Common Properties
+- [Gogift Authentication](https://apis.io/security/gogift/gogift-authentication/)
+- [Gogift Domain Security](https://apis.io/security/gogift/gogift-domain-security/)
 
-- [Website](https://www.global.gogift.com/)
-- [Documentation](https://www.global.gogift.com/gift-card-api)
+#### OAuth scopes (1)
 
-## Maintainers
+The permissions the API asks for.
 
-**FN:** Kin Lane
+- [Gogift Scopes](https://apis.io/scopes/gogift/gogift-scopes/)
 
-**Email:** kin@apievangelist.com
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Gogift Plans Pricing](https://apis.io/plans/gogift/gogift-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Gogift Rate Limits](https://apis.io/rate-limits/gogift/gogift-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Gogift Finops](https://apis.io/finops/gogift/gogift-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://global.gogift.com/)
+- [Documentation](https://docs.gogift.io/)
+- [Getting started](https://global.gogift.com/en/get-started)
+- [API reference](https://docs.gogift.io/#rest-api-reference)
+- [Pricing](https://global.gogift.com/en/pricing)
+- [Sign up](https://global.gogift.com/en/create-account)
+- [Support](https://support.gogift.com/en)
+- [Blog](https://global.gogift.com/en/blog)
+- [Terms of service](https://support.gogift.com/en/article/dc0cc2)
+- [Privacy policy](https://support.gogift.com/en/article/355f71)
+- [GitHub](https://github.com/GoGift)
+
+## API Evangelist rating
+
+**Kin Score 41.8** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 39.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 56.0 |
+| Access clarity | 44.7 |
+
+**Agent readiness 36.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 31.3** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/gogift/](https://apis.io/providers/gogift/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for GoGift: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/gogift/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
