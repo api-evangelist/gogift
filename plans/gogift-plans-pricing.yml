@@ -1,0 +1,40 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-28'
+method: searched
+source: https://global.gogift.com/en/pricing
+sources:
+- https://global.gogift.com/en/pricing
+provenance:
+  tool: engine/economics/harvest_pricing.py
+  run: 20261028T161713
+  grounding: every price_text was found verbatim in the fetched page text
+audience: business-product
+pricing_basis: negotiated
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-10-28'
+published: false
+note: No numeric price is published on the pricing page; Page states you pay the face value of rewards
+  with no setup fees or subscriptions, but shows no numeric prices; directs to sales for API/tailored
+  setups.
+plan_count: 1
+plans:
+- name: Face value pricing
+  price_text: Contact sales
+  period: none
+  included_quota: Pay only for the value of the rewards you send; no setup fees, subscriptions, or hidden
+    platform costs
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models: []
+  units: []
+  plans:
+  - name: Face value pricing
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
