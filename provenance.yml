@@ -17,6 +17,9 @@ artifacts:
   data-model/gogift-data-model.yml:
     method: searched
     evidence: declared in the artifact
+  eligibility/gogift-eligibility.yml:
+    method: harvested
+    evidence: declared in the artifact
   errors/gogift-problem-types.yml:
     method: searched
     evidence: declared in the artifact
@@ -32,10 +35,13 @@ artifacts:
   heartbeat/2026-11-06.yml:
     method: unknown
     evidence: no authorship recorded
+  heartbeat/2026-11-13.yml:
+    method: unknown
+    evidence: no authorship recorded
   kin/checks-2026-10-23T222754.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
-  kin/checks-2026-11-02T082323.yml:
+  kin/checks-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-09-23T000603.yml:
@@ -101,6 +107,9 @@ artifacts:
   kin/score-2026-11-02T082323.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-11-06T143934.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
   lifecycle/gogift-lifecycle.yml:
     method: searched
     evidence: declared in the artifact
@@ -116,6 +125,9 @@ artifacts:
   plans/gogift-plans-pricing.yml:
     method: searched
     evidence: declared in the artifact
+  privacy/gogift-privacy-policy.yml:
+    method: harvested
+    evidence: declared in the artifact
   rate-limits/gogift-rate-limits.yml:
     method: searched
     evidence: declared in the artifact
@@ -128,6 +140,9 @@ artifacts:
   security/gogift-domain-security.yml:
     method: unknown
     evidence: no authorship recorded
+  terms/gogift-terms-of-service.yml:
+    method: harvested
+    evidence: declared in the artifact
   well-known/gogift-openid-configuration.json:
     method: unknown
     evidence: no authorship recorded
